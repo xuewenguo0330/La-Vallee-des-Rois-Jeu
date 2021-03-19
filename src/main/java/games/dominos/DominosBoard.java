@@ -14,9 +14,7 @@ public class DominosBoard implements IBoard<DominosMove, DominosRole, DominosBoa
 
 	public static int GRID_SIZE = DEFAULT_GRID_SIZE;
 
-	private enum SQUARE {
-		EMPTY, VERTICAL, HORIZONTAL
-	};
+	private enum SQUARE {EMPTY, VERTICAL, HORIZONTAL}
 
 	// ---------------------- Attributes ---------------------
 

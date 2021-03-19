@@ -7,7 +7,6 @@ import iialib.games.algs.IHeuristic;
 import iialib.games.model.IBoard;
 import iialib.games.model.IMove;
 import iialib.games.model.IRole;
-import iialib.games.model.Player;
 
 public class MiniMax<Move extends IMove,Role extends IRole,Board extends IBoard<Move,Role,Board>> implements GameAlgorithm<Move,Role,Board> {
 
@@ -18,7 +17,7 @@ public class MiniMax<Move extends IMove,Role extends IRole,Board extends IBoard<
 	private final Role playerMaxRole;
 	private final Role playerMinRole;
 	private int depthMax = DEPTH_MAX_DEFAULT;
-	private IHeuristic<Board, Role> h;
+	private final IHeuristic<Board, Role> h;
 	private int nbNodes;
 	private int nbLeaves;
 

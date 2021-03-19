@@ -9,6 +9,7 @@ public class MyChallenger implements IChallenger {
 	@Override
 	public String teamName() {
 		// TODO Auto-generated method stub
+
 		return null;
 	}
 
