@@ -53,9 +53,21 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 				if ((playerRole == KVRole.BLUE && bluePieces.contains(boardGrid[i][j])) ||
 						(playerRole == KVRole.WHITE && whitePieces.contains(boardGrid[i][j]))) {
 					for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-						KVMove move = new KVMove(i, j, d);
-						if (isValidMove(move, playerRole))
-							possibleMoves.add(move);
+						if (isValidMove(new KVMove(i, j, d), playerRole)) {
+							Point step = step(d);
+							int x = i;
+							int y = j;
+							for (int k = 0; k < DEFAULT_GRID_SIZE; k++) {
+								x += step.x;
+								y += step.y;
+
+								if ((x < 0 || x > DEFAULT_GRID_SIZE - 1 || y < 0 || y > DEFAULT_GRID_SIZE - 1) ||
+										(boardGrid[x][y] != PIECE.EMPTY)) {
+									possibleMoves.add(new KVMove(i, j, x - step.x, y - step.y));
+									break;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -100,8 +112,13 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	@Override
 	public boolean isValidMove(KVMove move, KVRole playerRole) {
+		if (boardGrid[move.start.x][move.start.y] == PIECE.EMPTY) System.out.println("Wrong move 2");
 		Point step = step(move.direction);
-		return boardGrid[move.start.x + step.x][move.start.y + step.y] == PIECE.EMPTY;
+		int new_x = move.start.x + step.x;
+		int new_y = move.start.y + step.y;
+
+		if (new_x < 0 || new_x > DEFAULT_GRID_SIZE - 1 || new_y < 0 || new_y > DEFAULT_GRID_SIZE - 1) return false;
+		return boardGrid[new_x][new_y] == PIECE.EMPTY;
 	}
 
 	@Override
@@ -173,7 +190,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return newGrid;
 	}
 
-	private Point step(KVMove.DIRECTION direction) {
+	public static Point step(KVMove.DIRECTION direction) {
 		Point res = new Point(0, 0);
 
 		switch (direction) {
@@ -181,22 +198,23 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			case DOWN -> res.y += -1;
 			case LEFT -> res.x += -1;
 			case RIGHT -> res.x += 1;
-			case UL -> { res.x += -1; res.y += 1; }
-			case UR -> { res.x += 1; res.y += 1; }
-			case DL -> { res.x += -1; res.y += -1; }
+			case UL -> {
+				res.x += -1;
+				res.y += 1;
+			}
+			case UR -> {
+				res.x += 1;
+				res.y += 1;
+			}
+			case DL -> {
+				res.x += -1;
+				res.y += -1;
+			}
 			case DR -> { res.x += 1; res.y += -1; }
 			default -> throw new IllegalStateException("Unexpected value: " + direction);
 		}
 
 		return res;
-	}
-
-	public Point getRoiBleu() {
-		return roiBleu;
-	}
-
-	public Point getRoiWhite() {
-		return roiWhite;
 	}
 
 	public PIECE[][] getBoardGrid() {

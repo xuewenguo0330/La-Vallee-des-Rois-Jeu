@@ -4,6 +4,7 @@ import iialib.games.model.IChallenger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public class MyChallenger implements IChallenger {
 	KVRole roleChallenger;
 	KVRole roleOther;
 
-	String collone = "ABCDEFG";
+	String colonne = "ABCDEFG";
 
 
 	@Override
@@ -52,10 +53,10 @@ public class MyChallenger implements IChallenger {
 
 	private KVMove moveToKvmove(String move) {
 		char[] moves = move.toCharArray();
-		int x1 = collone.indexOf(moves[0]);
-		int x2 = collone.indexOf(moves[3]);
-		int y1 = moves[1] - '0' - 1;
-		int y2 = moves[4] - '0' - 1;
+		int x1 = 7 - (moves[1] - '0' - 1);
+		int x2 = 7 - (moves[4] - '0' - 1);
+		int y1 = colonne.indexOf(moves[0]);
+		int y2 = colonne.indexOf(moves[3]);
 
 		return new KVMove(x1, y1, x2, y2);
 	}
@@ -127,7 +128,7 @@ public class MyChallenger implements IChallenger {
 		myReader.nextLine();
 		myReader.nextLine();
 		int lines = 0;
-		while (myReader.hasNextLine() && lines < 8) {
+		while (myReader.hasNextLine() && lines < 7) {
 			String line = myReader.nextLine();
 			String[] strings = line.split(" ");
 			int collone = 0;
@@ -151,7 +152,12 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public Set<String> possibleMoves() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> moves = new HashSet<>();
+		for (KVMove m : board.possibleMoves(roleChallenger)) {
+			String test = colonne.charAt(m.start.y) + "" +  (7 - m.start.x) + "-" + colonne.charAt(m.end.y) + (7 - m.end.x);
+			moves.add(test);
+			System.out.println(test);
+		}
+		return moves;
 	}
 }
