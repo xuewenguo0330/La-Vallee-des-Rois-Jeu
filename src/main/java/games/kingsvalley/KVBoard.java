@@ -1,10 +1,10 @@
 package games.kingsvalley;
 
-import java.awt.*;
-import java.util.ArrayList;
-
 import iialib.games.model.IBoard;
 import iialib.games.model.Score;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	enum PIECE {EMPTY, SOLDATBLEU, SOLDATROUGE, ROIBLEU, ROIROUGE}
@@ -38,47 +38,29 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	@Override
 	public ArrayList<KVMove> possibleMoves(KVRole playerRole) {
-		ArrayList<KVMove> possibleMoves=new ArrayList<>();
-		if(playerRole== KVRole.BLUE){
-			for(int i=0;i<DEFAULT_GRID_SIZE;i++){
-				for(int j=0;i<DEFAULT_GRID_SIZE;j++){
-					if (boardGrid[i][j]==PIECE.SOLDATBLEU){
-						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-							KVMove move=new KVMove(i,j,d);
-							if(isValidMove(move,playerRole))
-								possibleMoves.add(move);
-						}
-					}
-					else if(boardGrid[i][j]==PIECE.SOLDATROUGE){
-						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-							KVMove move=new KVMove(i,j,d);
-							if(isValidMove(move,playerRole))
-								possibleMoves.add(move);
-						}
-					}
-				}
-			}
-		}
-		else{
-			for(int i=0;i<DEFAULT_GRID_SIZE;i++){
-				for(int j=0;i<DEFAULT_GRID_SIZE;j++){
-					if (boardGrid[i][j]==PIECE.SOLDATROUGE){
-						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-							KVMove move=new KVMove(i,j,d);
-							if(isValidMove(move,playerRole))
-								possibleMoves.add(move);
-						}
-					}
-					else if(boardGrid[i][j]==PIECE.ROIROUGE){
-						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-							KVMove move=new KVMove(i,j,d);
-							if(isValidMove(move,playerRole))
-								possibleMoves.add(move);
-						}
+		ArrayList<KVMove> possibleMoves = new ArrayList<>();
+
+		ArrayList<PIECE> bluePieces = new ArrayList<>();
+		bluePieces.add(PIECE.SOLDATBLEU);
+		bluePieces.add(PIECE.ROIBLEU);
+
+		ArrayList<PIECE> whitePieces = new ArrayList<>();
+		whitePieces.add(PIECE.SOLDATROUGE);
+		whitePieces.add(PIECE.ROIROUGE);
+
+		for (int i = 0; i < DEFAULT_GRID_SIZE; i++) {
+			for (int j = 0; j < DEFAULT_GRID_SIZE; j++) {
+				if ((playerRole == KVRole.BLUE && bluePieces.contains(boardGrid[i][j])) ||
+						(playerRole == KVRole.WHITE && whitePieces.contains(boardGrid[i][j]))) {
+					for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+						KVMove move = new KVMove(i, j, d);
+						if (isValidMove(move, playerRole))
+							possibleMoves.add(move);
 					}
 				}
 			}
 		}
+
 		return possibleMoves;
 	}
 
@@ -98,7 +80,6 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			y += step.y;
 
 			if (newGrid[x][y] != PIECE.EMPTY) {
-				if (x != move.end.x && y != move.end.y) System.out.println("Wrong move 2");
 				newGrid[x - step.x][y - step.y] = piece;
 				switch (piece) {
 					case ROIBLEU:
@@ -127,14 +108,20 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	public boolean isGameOver() {
 	    if (roiRouge.x == roiRouge.y && roiRouge.x == 3) return true;
 		if (roiBleu.x == roiBleu.y && roiBleu.x == 3) return true;
+		return roiBlock(KVRole.BLUE) || roiBlock(KVRole.WHITE);
+	}
 
+	public boolean roiBlock(KVRole role) {
 		for(KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
 			Point step = step(direction);
-			if (boardGrid[roiRouge.x + step.x][roiRouge.y + step.y] == PIECE.EMPTY) return false;
-			if (boardGrid[roiBleu.x + step.x][roiBleu.y + step.y] == PIECE.EMPTY) return false;
+			if (role == KVRole.BLUE && boardGrid[roiBleu.x + step.x][roiBleu.y + step.y] == PIECE.EMPTY) {
+				return false;
+			}
+			if (role == KVRole.WHITE && boardGrid[roiRouge.x + step.x][roiRouge.y + step.y] == PIECE.EMPTY) {
+				return false;
+			}
 		}
-
-		return false;
+		return true;
 	}
 
 	@Override
@@ -190,36 +177,15 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		Point res = new Point(0, 0);
 
 		switch (direction) {
-			case UP:
-				res.y += 1;
-				break;
-			case DOWN:
-				res.y += -1;
-				break;
-			case LEFT:
-				res.x += -1;
-				break;
-			case RIGHT:
-				res.x += 1;
-				break;
-			case UL:
-				res.x += -1;
-				res.y += 1;
-				break;
-			case UR:
-				res.x += 1;
-				res.y += 1;
-				break;
-			case DL:
-				res.x += -1;
-				res.y += -1;
-				break;
-			case DR:
-				res.x += 1;
-				res.y += -1;
-				break;
-			default:
-				throw new IllegalStateException("Unexpected value: " + direction);
+			case UP -> res.y += 1;
+			case DOWN -> res.y += -1;
+			case LEFT -> res.x += -1;
+			case RIGHT -> res.x += 1;
+			case UL -> { res.x += -1; res.y += 1; }
+			case UR -> { res.x += 1; res.y += 1; }
+			case DL -> { res.x += -1; res.y += -1; }
+			case DR -> { res.x += 1; res.y += -1; }
+			default -> throw new IllegalStateException("Unexpected value: " + direction);
 		}
 
 		return res;
