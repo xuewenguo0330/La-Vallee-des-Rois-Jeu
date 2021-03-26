@@ -19,7 +19,15 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public String teamName() {
-		return "ABADIE - GUO - CHEN";
+		Scanner scanner = new Scanner(System.in);
+		StringBuilder teamName = new StringBuilder();
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Enter Participant " + (i+1) + ": ");
+			teamName.append(scanner.nextLine()).append(" - ");
+		}
+		teamName.delete(teamName.length() - 3, teamName.length());
+//		System.out.println(teamName.toString());
+		return teamName.toString();
 	}
 
 	@Override
@@ -43,7 +51,11 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public void iPlay(String move) {
-		board = board.play(moveToKvmove(move), roleChallenger);
+		if (possibleMoves().contains(move)) {
+			board = board.play(moveToKvmove(move), roleChallenger);
+		} else {
+			System.out.println("Wrong move 3");
+		}
 	}
 
 	@Override
@@ -53,11 +65,11 @@ public class MyChallenger implements IChallenger {
 
 	private KVMove moveToKvmove(String move) {
 		char[] moves = move.toCharArray();
-		int x1 = 7 - (moves[1] - '0' - 1);
-		int x2 = 7 - (moves[4] - '0' - 1);
+		int x1 = 7 - (moves[1] - '0');
+		int x2 = 7 - (moves[4] - '0');
 		int y1 = colonne.indexOf(moves[0]);
 		int y2 = colonne.indexOf(moves[3]);
-
+//		System.out.println(x1 + ", " + y1 + "\t" + x2 + ", " + y2);
 		return new KVMove(x1, y1, x2, y2);
 	}
 

@@ -6,6 +6,7 @@ public class test {
     public static void main(String[] args) {
         String fileName = "Exple_plateau_1.txt";
         MyChallenger myChallenger = new MyChallenger();
+        myChallenger.teamName();
         myChallenger.setBoardFromFile(fileName);
         System.out.println(myChallenger.getBoard());
         myChallenger.setRole("BLUE");
@@ -16,6 +17,12 @@ public class test {
         }
 
         myChallenger.iPlay("A7-B7");
+        System.out.println(myChallenger.getBoard());
+
+        myChallenger.iPlay("F4-C5");
+        System.out.println(myChallenger.getBoard());
+
+        myChallenger.iPlay("F4-C4");
         System.out.println(myChallenger.getBoard());
     }
 }
