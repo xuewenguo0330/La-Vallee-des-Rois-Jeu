@@ -190,4 +190,16 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 		return res;
 	}
+
+	public Point getRoiBleu() {
+		return roiBleu;
+	}
+
+	public Point getRoiRouge() {
+		return roiRouge;
+	}
+
+	public PIECE[][] getBoardGrid() {
+		return boardGrid;
+	}
 }

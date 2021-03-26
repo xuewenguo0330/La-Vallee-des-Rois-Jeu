@@ -1,5 +1,6 @@
 package games.kingsvalley;
 
+import java.awt.*;
 import java.util.Set;
 
 import iialib.games.model.IChallenger;
@@ -63,16 +64,30 @@ public class MyChallenger implements IChallenger {
 		return null;
 	}
 
+	public void GameOver(){
+		if(roleChallenger==KVRole.BLUE) {
+			Point challengerRoi = board.getRoiBleu();
+			Point otherRoi = board.getRoiRouge();
+			if (challengerRoi.x == challengerRoi.y && challengerRoi.x == 3) {
+				victory();
+			}
+			else if(otherRoi.x == otherRoi.y && otherRoi.x == 3){
+				defeat();
+			}
+			else if (board.roiBlock(roleChallenger))
+				defeat();
+			else if(board.roiBlock(roleOther))
+				victory();
+		}
+	}
 	@Override
 	public String victory() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Vous avew gagné!";
 	}
 
 	@Override
 	public String defeat() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Vous avez perdu!";
 	}
 
 	@Override
