@@ -1,6 +1,8 @@
 package games.kingsvalley;
 
-import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import java.util.Set;
 
 import iialib.games.model.IChallenger;
@@ -64,25 +66,9 @@ public class MyChallenger implements IChallenger {
 		return null;
 	}
 
-	public void GameOver(){
-		if(roleChallenger==KVRole.BLUE) {
-			Point challengerRoi = board.getRoiBleu();
-			Point otherRoi = board.getRoiRouge();
-			if (challengerRoi.x == challengerRoi.y && challengerRoi.x == 3) {
-				victory();
-			}
-			else if(otherRoi.x == otherRoi.y && otherRoi.x == 3){
-				defeat();
-			}
-			else if (board.roiBlock(roleChallenger))
-				defeat();
-			else if(board.roiBlock(roleOther))
-				victory();
-		}
-	}
 	@Override
 	public String victory() {
-		return "Vous avew gagné!";
+		return "Vous avez gagné!";
 	}
 
 	@Override
@@ -92,8 +78,7 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public String tie() {
-		// TODO Auto-generated method stub
-		return null;
+		return "C'est la partie nulle!";
 	}
 
 	@Override
@@ -104,7 +89,13 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public void setBoardFromFile(String fileName) {
-		// TODO Auto-generated method stub
+		File text = new File(fileName);
+		Scanner myReader;
+		try {
+			myReader = new Scanner(text);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
 	}
 
