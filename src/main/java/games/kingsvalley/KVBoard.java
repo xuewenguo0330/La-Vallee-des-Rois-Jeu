@@ -48,19 +48,22 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		whitePieces.add(PIECE.SOLDATWHITE);
 		whitePieces.add(PIECE.ROIWHITE);
 
+		// Parcours la matrice de plateau et trouver tous les moves possibles pour tous les pièces de joueur playerRole
 		for (int i = 0; i < DEFAULT_GRID_SIZE; i++) {
 			for (int j = 0; j < DEFAULT_GRID_SIZE; j++) {
+				// Vérifier le role et la position de cette case
 				if ((playerRole == KVRole.BLUE && bluePieces.contains(boardGrid[i][j])) ||
 						(playerRole == KVRole.WHITE && whitePieces.contains(boardGrid[i][j]))) {
 					for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+						// Vérifier si ce move est valide
 						if (isValidMove(new KVMove(i, j, d), playerRole)) {
+							// Calculer la position de cette pièce apèrs le move
 							Point step = step(d);
 							int x = i;
 							int y = j;
 							for (int k = 0; k < DEFAULT_GRID_SIZE; k++) {
 								x += step.x;
 								y += step.y;
-
 								if ((x < 0 || x > DEFAULT_GRID_SIZE - 1 || y < 0 || y > DEFAULT_GRID_SIZE - 1) ||
 										(boardGrid[x][y] != PIECE.EMPTY)) {
 									possibleMoves.add(new KVMove(i, j, x - step.x, y - step.y));
@@ -79,31 +82,16 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	@Override
 	public KVBoard play(KVMove move, KVRole playerRole) {
 		PIECE[][] newGrid = copyGrid();
-		Point step = step(move.direction);
+		PIECE piece = newGrid[move.start.x][move.start.y];
 
-		int x = move.start.x;
-		int y = move.start.y;
+		newGrid[move.start.x][move.start.y] = PIECE.EMPTY;
+		newGrid[move.end.x][move.end.y] = piece;
 
-		PIECE piece = newGrid[x][y];
-
-		newGrid[x][y] = PIECE.EMPTY;
-		for (int i = 0; i < DEFAULT_GRID_SIZE; i++) {
-			x += step.x;
-			y += step.y;
-
-			if (newGrid[x][y] != PIECE.EMPTY) {
-				newGrid[x - step.x][y - step.y] = piece;
-				switch (piece) {
-					case ROIBLEU:
-						roiBleu = new Point(x - step.x, y - step.y);
-						break;
-					case ROIWHITE:
-						roiWhite = new Point(x - step.x, y - step.y);
-						break;
-					default:
-						break;
-				}
-				break;
+		// Mise à jour la position de roi si besoin
+		switch (piece) {
+			case ROIBLEU -> roiBleu = new Point(move.end.x, move.end.y);
+			case ROIWHITE -> roiWhite = new Point(move.end.x, move.end.y);
+			default -> {
 			}
 		}
 
@@ -113,10 +101,12 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	@Override
 	public boolean isValidMove(KVMove move, KVRole playerRole) {
 		if (boardGrid[move.start.x][move.start.y] == PIECE.EMPTY) System.out.println("Wrong move 2");
+
 		Point step = step(move.direction);
 		int new_x = move.start.x + step.x;
 		int new_y = move.start.y + step.y;
 
+		// Vérifier si une pièce a un direction disponible
 		if (new_x < 0 || new_x > DEFAULT_GRID_SIZE - 1 || new_y < 0 || new_y > DEFAULT_GRID_SIZE - 1) return false;
 		return boardGrid[new_x][new_y] == PIECE.EMPTY;
 	}
@@ -128,6 +118,11 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return roiBlock(KVRole.BLUE) || roiBlock(KVRole.WHITE);
 	}
 
+	/**
+	 * Détecter si un roi est bloqué
+	 * @param role KVRole
+	 * @return boolean
+	 */
 	public boolean roiBlock(KVRole role) {
 		for(KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
 			Point step = step(direction);
@@ -155,6 +150,10 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return scores;
 	}
 
+	/**
+	 * Copier la matrice de plateur
+	 * @return PIECE[][]
+	 */
 	private PIECE[][] copyGrid() {
 		PIECE[][] newGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
 		for (int i = 0; i < DEFAULT_GRID_SIZE; i++)
@@ -162,33 +161,33 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return newGrid;
 	}
 
+
+	/**
+	 * Avec direction, on calcule le pas
+	 * @param direction KVMove.DIRECTION
+	 * @return Point
+	 */
 	public static Point step(KVMove.DIRECTION direction) {
-		Point res = new Point(0, 0);
+		Point res = null;
 
 		switch (direction) {
-			case UP -> res.y += 1;
-			case DOWN -> res.y += -1;
-			case LEFT -> res.x += -1;
-			case RIGHT -> res.x += 1;
-			case UL -> {
-				res.x += -1;
-				res.y += 1;
-			}
-			case UR -> {
-				res.x += 1;
-				res.y += 1;
-			}
-			case DL -> {
-				res.x += -1;
-				res.y += -1;
-			}
-			case DR -> { res.x += 1; res.y += -1; }
-			default -> throw new IllegalStateException("Unexpected value: " + direction);
+			case UP -> res = new Point(0, 1);
+			case DOWN -> res = new Point(0, -1);
+			case LEFT -> res = new Point(-1, 0);
+			case RIGHT -> res = new Point(1, 0);
+			case UL -> res = new Point(-1, 1);
+			case UR -> res = new Point(1, 1);
+			case DL -> res = new Point(-1, -1);
+			case DR -> res = new Point(1, -1);
 		}
 
 		return res;
 	}
 
+	/**
+	 * get matrice de plateau
+	 * @return PIECE[][]
+	 */
 	public PIECE[][] getBoardGrid() {
 		return boardGrid;
 	}

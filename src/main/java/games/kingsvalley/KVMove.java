@@ -16,6 +16,7 @@ public class KVMove implements IMove {
         start = new Point(x1, y1);
         end = new Point(x2, y2);
 
+        // Trouver la direction de ce move
         if (x1 > x2) {
             if (y1 > y2) {
                 direction = DIRECTION.DL;

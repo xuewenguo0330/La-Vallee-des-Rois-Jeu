@@ -66,6 +66,11 @@ public class MyChallenger implements IChallenger {
 
 	}
 
+	/**
+	 * Transmettre String à un instance KVMove
+	 * @param move String
+	 * @return KVMove
+	 */
 	private KVMove moveToKvmove(String move) {
 		char[] moves = move.toCharArray();
 		int x1 = 7 - (moves[1] - '0');
