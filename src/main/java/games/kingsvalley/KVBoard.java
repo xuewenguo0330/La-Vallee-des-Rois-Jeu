@@ -38,9 +38,48 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	@Override
 	public ArrayList<KVMove> possibleMoves(KVRole playerRole) {
-		// TODO Auto-generated method stub
-
-		return null;
+		ArrayList<KVMove> possibleMoves=new ArrayList<>();
+		if(playerRole== KVRole.BLUE){
+			for(int i=0;i<DEFAULT_GRID_SIZE;i++){
+				for(int j=0;i<DEFAULT_GRID_SIZE;j++){
+					if (boardGrid[i][j]==PIECE.SOLDATBLEU){
+						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+							KVMove move=new KVMove(i,j,d);
+							if(isValidMove(move,playerRole))
+								possibleMoves.add(move);
+						}
+					}
+					else if(boardGrid[i][j]==PIECE.SOLDATROUGE){
+						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+							KVMove move=new KVMove(i,j,d);
+							if(isValidMove(move,playerRole))
+								possibleMoves.add(move);
+						}
+					}
+				}
+			}
+		}
+		else{
+			for(int i=0;i<DEFAULT_GRID_SIZE;i++){
+				for(int j=0;i<DEFAULT_GRID_SIZE;j++){
+					if (boardGrid[i][j]==PIECE.SOLDATROUGE){
+						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+							KVMove move=new KVMove(i,j,d);
+							if(isValidMove(move,playerRole))
+								possibleMoves.add(move);
+						}
+					}
+					else if(boardGrid[i][j]==PIECE.ROIROUGE){
+						for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+							KVMove move=new KVMove(i,j,d);
+							if(isValidMove(move,playerRole))
+								possibleMoves.add(move);
+						}
+					}
+				}
+			}
+		}
+		return possibleMoves;
 	}
 
 	@Override
