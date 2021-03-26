@@ -42,6 +42,11 @@ public class KVMove implements IMove {
         }
     }
 
+    KVMove(int x, int y, DIRECTION d) {
+        start = new Point(x, y);
+        direction = d;
+    }
+
     @Override
     public String toString() {
         return "Move{" + start.x + "," + start.y + "}: " + direction.toString();

@@ -10,6 +10,8 @@ public class MyChallenger implements IChallenger {
 	KVRole roleChallenger;
 	KVRole roleOther;
 
+	String collone = "ABCDEFG";
+
 
 	@Override
 	public String teamName() {
@@ -37,28 +39,22 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public void iPlay(String move) {
-		String collone = "ABCDEFG";
-		char[] moves = move.toCharArray();
-		int x1 = collone.indexOf(moves[0]);
-		int x2 = collone.indexOf(moves[3]);
-		int y1 = moves[1] - '0' - 1;
-		int y2 = moves[4] - '0' - 1;
-
-		KVMove kvmove = new KVMove(x1, y1, x2, y2);
-		board = board.play(kvmove, roleChallenger);
+		board = board.play(moveToKvmove(move), roleChallenger);
 	}
 
 	@Override
 	public void otherPlay(String move) {
-		String collone = "ABCDEFG";
+		board = board.play(moveToKvmove(move), roleOther);
+	}
+
+	private KVMove moveToKvmove(String move) {
 		char[] moves = move.toCharArray();
 		int x1 = collone.indexOf(moves[0]);
 		int x2 = collone.indexOf(moves[3]);
 		int y1 = moves[1] - '0' - 1;
 		int y2 = moves[4] - '0' - 1;
 
-		KVMove kvmove = new KVMove(x1, y1, x2, y2);
-		board = board.play(kvmove, roleChallenger);
+		return new KVMove(x1, y1, x2, y2);
 	}
 
 	@Override
