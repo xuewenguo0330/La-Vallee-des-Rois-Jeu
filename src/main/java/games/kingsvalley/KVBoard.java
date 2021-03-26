@@ -7,12 +7,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
-	enum PIECE {EMPTY, SOLDATBLEU, SOLDATROUGE, ROIBLEU, ROIROUGE}
+	enum PIECE {EMPTY, SOLDATBLEU, SOLDATWHITE, ROIBLEU, ROIWHITE}
 
-	private static final int DEFAULT_GRID_SIZE = 7;
+	public static final int DEFAULT_GRID_SIZE = 7;
 	private final PIECE[][] boardGrid;
 	private Point roiBleu;
-	private Point roiRouge;
+	private Point roiWhite;
 
 	public KVBoard() {
 		boardGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
@@ -23,13 +23,13 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		}
 		for (int i = 0; i < 7; i++) {
 			boardGrid[0][i] = PIECE.SOLDATBLEU;
-			boardGrid[6][i] = PIECE.SOLDATROUGE;
+			boardGrid[6][i] = PIECE.SOLDATWHITE;
 		}
-		boardGrid[0][3] = PIECE.ROIROUGE;
+		boardGrid[0][3] = PIECE.ROIWHITE;
 		boardGrid[6][3] = PIECE.ROIBLEU;
 
 		roiBleu = new Point(0, 3);
-		roiRouge = new Point(6, 3);
+		roiWhite = new Point(6, 3);
 	}
 
 	public KVBoard(PIECE[][] board) {
@@ -45,8 +45,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		bluePieces.add(PIECE.ROIBLEU);
 
 		ArrayList<PIECE> whitePieces = new ArrayList<>();
-		whitePieces.add(PIECE.SOLDATROUGE);
-		whitePieces.add(PIECE.ROIROUGE);
+		whitePieces.add(PIECE.SOLDATWHITE);
+		whitePieces.add(PIECE.ROIWHITE);
 
 		for (int i = 0; i < DEFAULT_GRID_SIZE; i++) {
 			for (int j = 0; j < DEFAULT_GRID_SIZE; j++) {
@@ -85,8 +85,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 					case ROIBLEU:
 						roiBleu = new Point(x - step.x, y - step.y);
 						break;
-					case ROIROUGE:
-						roiRouge = new Point(x - step.x, y - step.y);
+					case ROIWHITE:
+						roiWhite = new Point(x - step.x, y - step.y);
 						break;
 					default:
 						break;
@@ -106,7 +106,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	@Override
 	public boolean isGameOver() {
-	    if (roiRouge.x == roiRouge.y && roiRouge.x == 3) return true;
+	    if (roiWhite.x == roiWhite.y && roiWhite.x == 3) return true;
 		if (roiBleu.x == roiBleu.y && roiBleu.x == 3) return true;
 		return roiBlock(KVRole.BLUE) || roiBlock(KVRole.WHITE);
 	}
@@ -117,7 +117,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			if (role == KVRole.BLUE && boardGrid[roiBleu.x + step.x][roiBleu.y + step.y] == PIECE.EMPTY) {
 				return false;
 			}
-			if (role == KVRole.WHITE && boardGrid[roiRouge.x + step.x][roiRouge.y + step.y] == PIECE.EMPTY) {
+			if (role == KVRole.WHITE && boardGrid[roiWhite.x + step.x][roiWhite.y + step.y] == PIECE.EMPTY) {
 				return false;
 			}
 		}
@@ -127,7 +127,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	@Override
 	public ArrayList<Score<KVRole>> getScores() {
 		ArrayList<Score<KVRole>> scores = new ArrayList<>();
-		if (roiRouge.x == roiRouge.y && roiRouge.x == 3) {
+		if (roiWhite.x == roiWhite.y && roiWhite.x == 3) {
 			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
 			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
 		}
@@ -140,7 +140,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		boolean flag = true;
 		for(KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
 			Point step = step(direction);
-			if (boardGrid[roiRouge.x + step.x][roiRouge.y + step.y] == PIECE.EMPTY) {
+			if (boardGrid[roiWhite.x + step.x][roiWhite.y + step.y] == PIECE.EMPTY) {
 				flag = false;
 				break;
 			}
@@ -195,8 +195,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return roiBleu;
 	}
 
-	public Point getRoiRouge() {
-		return roiRouge;
+	public Point getRoiWhite() {
+		return roiWhite;
 	}
 
 	public PIECE[][] getBoardGrid() {

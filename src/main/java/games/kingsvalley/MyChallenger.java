@@ -1,11 +1,11 @@
 package games.kingsvalley;
 
+import iialib.games.model.IChallenger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Set;
-
-import iialib.games.model.IChallenger;
 
 public class MyChallenger implements IChallenger {
 	KVBoard board;
@@ -24,19 +24,19 @@ public class MyChallenger implements IChallenger {
 	@Override
 	public void setRole(String role) {
 		switch (role) {
-			case "BLACK":
+			case "BLACK" -> {
 				roleChallenger = KVRole.BLUE;
 				roleOther = KVRole.WHITE;
-				break;
-			case "WHITE":
+			}
+			case "WHITE" -> {
 				roleChallenger = KVRole.WHITE;
 				roleOther = KVRole.BLUE;
-				break;
-			default:
+			}
+			default -> {
 				System.out.println("Unrecognized role name, reset to default");
 				roleChallenger = KVRole.BLUE;
 				roleOther = KVRole.WHITE;
-				break;
+			}
 		}
 	}
 
@@ -83,20 +83,70 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public String getBoard() {
-		// TODO Auto-generated method stub
-		return null;
+		KVBoard.PIECE[][] boardGrid = board.getBoardGrid();
+		StringBuilder table = new StringBuilder();
+		table.append("    A B C D E F G \n  .................\n");
+		for (int i = 0; i < KVBoard.DEFAULT_GRID_SIZE; i++) {
+			table.append(7 - i).append(" : ");
+			for (int j = 0; j < KVBoard.DEFAULT_GRID_SIZE; j++) {
+				if (i == 3 && j == 3) {
+					switch (boardGrid[i][j]) {
+						case ROIBLEU -> table.append("O ");
+						case ROIWHITE -> table.append("X ");
+						default -> table.append("+ ");
+					}
+					continue;
+				}
+				switch (boardGrid[i][j]) {
+					case EMPTY -> table.append("- ");
+					case ROIBLEU -> table.append("O ");
+					case ROIWHITE -> table.append("X ");
+					case SOLDATBLEU -> table.append("o ");
+					case SOLDATWHITE -> table.append("x ");
+				}
+			}
+			table.append(" : ").append(7 - i).append("\n");
+		}
+		table.append("  .................\n    A B C D E F G");
+		return table.toString();
+
 	}
 
 	@Override
 	public void setBoardFromFile(String fileName) {
 		File text = new File(fileName);
-		Scanner myReader;
+		Scanner myReader = null;
 		try {
 			myReader = new Scanner(text);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		assert myReader != null;
 
+		KVBoard.PIECE[][] boardGrid = new KVBoard.PIECE[KVBoard.DEFAULT_GRID_SIZE][KVBoard.DEFAULT_GRID_SIZE];
+		myReader.nextLine();
+		myReader.nextLine();
+		int lines = 0;
+		while (myReader.hasNextLine() && lines < 8) {
+			String line = myReader.nextLine();
+			String[] strings = line.split(" ");
+			int collone = 0;
+
+			for (String c : strings) {
+				switch (c) {
+					case "o" -> boardGrid[lines][collone] = KVBoard.PIECE.SOLDATBLEU;
+					case "x" -> boardGrid[lines][collone] = KVBoard.PIECE.SOLDATWHITE;
+					case "X" -> boardGrid[lines][collone] = KVBoard.PIECE.ROIWHITE;
+					case "O" -> boardGrid[lines][collone] = KVBoard.PIECE.ROIBLEU;
+					case "-", "+" -> boardGrid[lines][collone] = KVBoard.PIECE.EMPTY;
+					default -> collone--;
+				}
+				collone++;
+			}
+			lines++;
+		}
+
+		board = new KVBoard(boardGrid);
 	}
 
 	@Override
@@ -104,5 +154,4 @@ public class MyChallenger implements IChallenger {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
