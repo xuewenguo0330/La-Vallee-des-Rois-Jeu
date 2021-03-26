@@ -10,10 +10,8 @@ import java.util.Set;
 
 public class MyChallenger implements IChallenger {
 	KVBoard board;
-
 	KVRole roleChallenger;
 	KVRole roleOther;
-
 	String colonne = "ABCDEFG";
 
 
@@ -51,7 +49,7 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public void iPlay(String move) {
-		if (possibleMoves().contains(move)) {
+		if (possibleMovesRole(roleChallenger).contains(move)) {
 			board = board.play(moveToKvmove(move), roleChallenger);
 		} else {
 			System.out.println("Wrong move 3");
@@ -60,7 +58,12 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public void otherPlay(String move) {
-		board = board.play(moveToKvmove(move), roleOther);
+		if (possibleMovesRole(roleOther).contains(move)) {
+			board = board.play(moveToKvmove(move), roleOther);
+		} else {
+			System.out.println("Wrong move 4");
+		}
+
 	}
 
 	private KVMove moveToKvmove(String move) {
@@ -128,20 +131,20 @@ public class MyChallenger implements IChallenger {
 	@Override
 	public void setBoardFromFile(String fileName) {
 		File text = new File(fileName);
-		Scanner myReader = null;
+		Scanner scanner = null;
 		try {
-			myReader = new Scanner(text);
+			scanner = new Scanner(text);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		assert myReader != null;
+		assert scanner != null;
 
 		KVBoard.PIECE[][] boardGrid = new KVBoard.PIECE[KVBoard.DEFAULT_GRID_SIZE][KVBoard.DEFAULT_GRID_SIZE];
-		myReader.nextLine();
-		myReader.nextLine();
+		scanner.nextLine();
+		scanner.nextLine();
 		int lines = 0;
-		while (myReader.hasNextLine() && lines < 7) {
-			String line = myReader.nextLine();
+		while (scanner.hasNextLine() && lines < 7) {
+			String line = scanner.nextLine();
 			String[] strings = line.split(" ");
 			int collone = 0;
 
@@ -164,9 +167,13 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public Set<String> possibleMoves() {
+		return possibleMovesRole(roleChallenger);
+	}
+
+	private Set<String> possibleMovesRole(KVRole role) {
 		Set<String> moves = new HashSet<>();
-		for (KVMove m : board.possibleMoves(roleChallenger)) {
-			String test = colonne.charAt(m.start.y) + "" +  (7 - m.start.x) + "-" + colonne.charAt(m.end.y) + (7 - m.end.x);
+		for (KVMove m : board.possibleMoves(role)) {
+			String test = colonne.charAt(m.start.y) + "" + (7 - m.start.x) + "-" + colonne.charAt(m.end.y) + (7 - m.end.x);
 			moves.add(test);
 			System.out.println(test);
 		}
