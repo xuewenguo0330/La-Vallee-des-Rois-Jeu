@@ -144,42 +144,14 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	@Override
 	public ArrayList<Score<KVRole>> getScores() {
 		ArrayList<Score<KVRole>> scores = new ArrayList<>();
-		if (roiWhite.x == roiWhite.y && roiWhite.x == 3) {
+		if (roiWhite.x == roiWhite.y && roiWhite.x == 3 || roiBlock(KVRole.BLUE)) {
 			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
 			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
 		}
-		if (roiBleu.x == roiBleu.y && roiBleu.x == 3) {
+		if (roiBleu.x == roiBleu.y && roiBleu.x == 3 || roiBlock(KVRole.WHITE)) {
 			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
 			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
 		}
-
-
-		boolean flag = true;
-		for(KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
-			Point step = step(direction);
-			if (boardGrid[roiWhite.x + step.x][roiWhite.y + step.y] == PIECE.EMPTY) {
-				flag = false;
-				break;
-			}
-		}
-		if (flag) {
-			scores.add(new Score<>(KVRole.WHITE,Score.Status.LOOSE,0));
-			scores.add(new Score<>(KVRole.BLUE,Score.Status.WIN,1));
-		}
-
-		flag = true;
-		for (KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
-			Point step = step(direction);
-			if (boardGrid[roiBleu.x + step.x][roiBleu.y + step.y] == PIECE.EMPTY) {
-				flag = false;
-				break;
-			}
-		}
-		if (flag) {
-			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
-			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
-		}
-
 		return scores;
 	}
 

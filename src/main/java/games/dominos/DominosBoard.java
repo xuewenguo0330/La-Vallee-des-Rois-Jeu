@@ -1,7 +1,6 @@
 package games.dominos;
 
 import iialib.games.model.IBoard;
-import iialib.games.model.Player;
 import iialib.games.model.Score;
 
 import java.util.ArrayList;
@@ -164,19 +163,15 @@ public class DominosBoard implements IBoard<DominosMove, DominosRole, DominosBoa
 
 	@Override
 	public ArrayList<Score<DominosRole>> getScores() {
-		ArrayList<Score<DominosRole>> scores = new ArrayList<Score<DominosRole>>();
-		if(this.isGameOver()) {
+		ArrayList<Score<DominosRole>> scores = new ArrayList<>();
+		if (this.isGameOver()) {
 			if (nbHorizontalMoves() == 0) {
-				scores.add(new Score<DominosRole>(DominosRole.HORIZONTAL,Score.Status.LOOSE,0));
-				scores.add(new Score<DominosRole>(DominosRole.VERTICAL,Score.Status.WIN,1));
+				scores.add(new Score<>(DominosRole.HORIZONTAL, Score.Status.LOOSE, 0));
+				scores.add(new Score<>(DominosRole.VERTICAL, Score.Status.WIN, 1));
+			} else {
+				scores.add(new Score<>(DominosRole.HORIZONTAL, Score.Status.WIN, 1));
+				scores.add(new Score<>(DominosRole.VERTICAL, Score.Status.LOOSE, 0));
 			}
-			else {
-				scores.add(new Score<DominosRole>(DominosRole.HORIZONTAL,Score.Status.WIN,1));
-				scores.add(new Score<DominosRole>(DominosRole.VERTICAL,Score.Status.LOOSE,0));
-			}			
-		}
-		else {
-			
 		}
 		return scores;
 	}
