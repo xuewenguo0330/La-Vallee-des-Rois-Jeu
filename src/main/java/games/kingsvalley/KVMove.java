@@ -5,17 +5,45 @@ import iialib.games.model.IMove;
 import java.awt.*;
 
 public class KVMove implements IMove {
-    enum DIRECTION{UP, DOWN, LEFT, RIGHT, UL, UR, DL, DR}
-    Point position;
+    enum DIRECTION {UP, DOWN, LEFT, RIGHT, UL, UR, DL, DR}
+
+    Point start;
+    Point end;
     DIRECTION direction;
 
-    KVMove(int x, int y, DIRECTION d) {
-        position = new Point(x, y);
-        direction = d;
+    KVMove(int x1, int y1, int x2, int y2) {
+        start = new Point(x1, y1);
+        end = new Point(x2, y2);
+
+        if (x1 > x2) {
+            if (y1 > y2) {
+                direction = DIRECTION.DL;
+            } else if (y1 == y2) {
+                direction = DIRECTION.LEFT;
+            } else {
+                direction = DIRECTION.UL;
+            }
+        } else if (x1 == x2) {
+            if (y1 > y2) {
+                direction = DIRECTION.DOWN;
+            } else if (y1 == y2) {
+                System.out.println("Wrong move");
+            } else {
+                direction = DIRECTION.UP;
+            }
+        } else {
+            if (y1 > y2) {
+                direction = DIRECTION.DR;
+            } else if (y1 == y2) {
+                direction = DIRECTION.RIGHT;
+            } else {
+                direction = DIRECTION.UR;
+            }
+        }
     }
 
     @Override
     public String toString() {
-        return "Move{" + position.x + "," + position.y + "}: " + direction.toString();
+        return "Move{" + start.x + "," + start.y + "}: " + direction.toString();
     }
 }

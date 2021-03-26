@@ -3,7 +3,6 @@ package games.kingsvalley;
 import java.awt.*;
 import java.util.ArrayList;
 
-import games.dominos.DominosRole;
 import iialib.games.model.IBoard;
 import iialib.games.model.Score;
 
@@ -49,8 +48,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		PIECE[][] newGrid = copyGrid();
 		Point step = step(move.direction);
 
-		int x = move.position.x;
-		int y = move.position.y;
+		int x = move.start.x;
+		int y = move.start.y;
 
 		PIECE piece = newGrid[x][y];
 
@@ -60,6 +59,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			y += step.y;
 
 			if (newGrid[x][y] != PIECE.EMPTY) {
+				if (x != move.end.x && y != move.end.y) System.out.println("Wrong move 2");
 				newGrid[x - step.x][y - step.y] = piece;
 				switch (piece) {
 					case ROIBLEU:
@@ -81,7 +81,7 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	@Override
 	public boolean isValidMove(KVMove move, KVRole playerRole) {
 		Point step = step(move.direction);
-		return boardGrid[move.position.x + step.x][move.position.y + step.y] == PIECE.EMPTY;
+		return boardGrid[move.start.x + step.x][move.start.y + step.y] == PIECE.EMPTY;
 	}
 
 	@Override
@@ -102,12 +102,12 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	public ArrayList<Score<KVRole>> getScores() {
 		ArrayList<Score<KVRole>> scores = new ArrayList<>();
 		if (roiRouge.x == roiRouge.y && roiRouge.x == 3) {
-			scores.add(new Score<>(KVRole.Black,Score.Status.LOOSE,0));
-			scores.add(new Score<>(KVRole.White,Score.Status.WIN,1));
+			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
+			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
 		}
 		if (roiBleu.x == roiBleu.y && roiBleu.x == 3) {
-			scores.add(new Score<>(KVRole.White,Score.Status.WIN,1));
-			scores.add(new Score<>(KVRole.Black,Score.Status.LOOSE,0));
+			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
+			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
 		}
 
 
@@ -120,8 +120,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			}
 		}
 		if (flag) {
-			scores.add(new Score<>(KVRole.White,Score.Status.LOOSE,0));
-			scores.add(new Score<>(KVRole.Black,Score.Status.WIN,1));
+			scores.add(new Score<>(KVRole.WHITE,Score.Status.LOOSE,0));
+			scores.add(new Score<>(KVRole.BLUE,Score.Status.WIN,1));
 		}
 
 		flag = true;
@@ -133,8 +133,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			}
 		}
 		if (flag) {
-			scores.add(new Score<>(KVRole.Black,Score.Status.LOOSE,0));
-			scores.add(new Score<>(KVRole.White,Score.Status.WIN,1));
+			scores.add(new Score<>(KVRole.BLUE,Score.Status.LOOSE,0));
+			scores.add(new Score<>(KVRole.WHITE,Score.Status.WIN,1));
 		}
 
 		return scores;

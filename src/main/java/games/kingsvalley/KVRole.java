@@ -2,6 +2,4 @@ package games.kingsvalley;
 
 import iialib.games.model.IRole;
 
-public enum KVRole implements IRole{
-    Black, White
-}
+public enum KVRole implements IRole {BLUE, WHITE}
