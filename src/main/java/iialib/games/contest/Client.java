@@ -59,9 +59,8 @@ public class Client {
             }
 
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
-
     }
 
 
@@ -70,7 +69,7 @@ public class Client {
             return new ChallengerSpeaker(new Socket(serverName, portNumber));
         } catch (IOException e) {
             System.out.println("[ERROR] Cannot read" + serverName + " on port " + portNumber);
-            System.out.println(e);
+            e.printStackTrace();
             System.exit(1);
         }
         return null;
@@ -81,7 +80,7 @@ public class Client {
         try {
             playerClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            System.err.println(e);
+            e.printStackTrace();
             System.exit(2);
         }
         try {

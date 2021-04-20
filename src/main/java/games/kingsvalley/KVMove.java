@@ -11,7 +11,6 @@ public class KVMove implements IMove {
     Point end;
     DIRECTION direction;
 
-
     KVMove(int x1, int y1, int x2, int y2) {
         start = new Point(x1, y1);
         end = new Point(x2, y2);
@@ -51,6 +50,7 @@ public class KVMove implements IMove {
 
     @Override
     public String toString() {
-        return "Move{" + start.x + "," + start.y + "}: " + direction.toString();
+        String colonne = "ABCDEFG";
+        return colonne.charAt(start.y) + "" + (7 - start.x) + "-" + colonne.charAt(end.y) + (7 - end.x);
     }
 }

@@ -1,5 +1,7 @@
 package games.kingsvalley;
 
+import iialib.games.algs.GameAlgorithm;
+import iialib.games.algs.algorithms.AlphaBeta;
 import iialib.games.model.IBoard;
 import iialib.games.model.Score;
 
@@ -13,6 +15,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	private final PIECE[][] boardGrid;
 	private Point roiBleu;
 	private Point roiWhite;
+	private GameAlgorithm<KVMove, KVRole, KVBoard> algoBlue;
+	private GameAlgorithm<KVMove, KVRole, KVBoard> algoWhite;
 
 	public KVBoard() {
 		boardGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
@@ -22,18 +26,28 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 			}
 		}
 		for (int i = 0; i < 7; i++) {
-			boardGrid[0][i] = PIECE.SOLDATBLEU;
-			boardGrid[6][i] = PIECE.SOLDATWHITE;
+			boardGrid[6][i] = PIECE.SOLDATBLEU;
+			boardGrid[0][i] = PIECE.SOLDATWHITE;
 		}
-		boardGrid[0][3] = PIECE.ROIWHITE;
-		boardGrid[6][3] = PIECE.ROIBLEU;
+		boardGrid[6][3] = PIECE.ROIWHITE;
+		boardGrid[0][3] = PIECE.ROIBLEU;
 
 		roiBleu = new Point(0, 3);
 		roiWhite = new Point(6, 3);
+
+		algoBlue = new AlphaBeta<>(KVRole.BLUE, KVRole.WHITE, KVHeuristique.heuristicBlue, 5);
+		algoWhite = new AlphaBeta<>(KVRole.WHITE, KVRole.BLUE, KVHeuristique.heuristicWhite, 5);
 	}
 
 	public KVBoard(PIECE[][] board) {
 		boardGrid = board;
+	}
+
+	public KVMove bestMove(KVRole role) {
+		return switch (role) {
+			case BLUE -> algoBlue.bestMove(this, KVRole.BLUE);
+			case WHITE -> algoWhite.bestMove(this, KVRole.WHITE);
+		};
 	}
 
 	@Override

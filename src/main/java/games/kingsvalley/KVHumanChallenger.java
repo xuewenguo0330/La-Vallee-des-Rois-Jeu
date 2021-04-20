@@ -8,10 +8,11 @@ import java.util.Set;
 
 import iialib.games.model.IChallenger;
 
-public class MyChallenger implements IChallenger {
+public class KVHumanChallenger implements IChallenger {
 	KVBoard board = new KVBoard();
 	KVRole roleChallenger;
 	KVRole roleOther;
+	String colonne = "ABCDEFG";
 
 	@Override
 	public String teamName() {
@@ -59,7 +60,9 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public String bestMove() {
-		return board.bestMove(roleChallenger).toString();
+		System.out.println(getBoard());
+		System.out.println("Entrer un coup :");
+		return new Scanner(System.in).nextLine();
 	}
 
 	@Override
@@ -152,7 +155,8 @@ public class MyChallenger implements IChallenger {
 	private Set<String> possibleMovesRole(KVRole role) {
 		Set<String> moves = new HashSet<>();
 		for (KVMove m : board.possibleMoves(role)) {
-			moves.add(m.toString());
+			String test = colonne.charAt(m.start.y) + "" + (7 - m.start.x) + "-" + colonne.charAt(m.end.y) + (7 - m.end.x);
+			moves.add(test);
 		}
 		return moves;
 	}
@@ -163,7 +167,6 @@ public class MyChallenger implements IChallenger {
 	 * @return KVMove
 	 */
 	private KVMove moveToKvmove(String move) {
-		String colonne = "ABCDEFG";
 		char[] moves = move.toCharArray();
 		int x1 = 7 - (moves[1] - '0');
 		int x2 = 7 - (moves[4] - '0');
