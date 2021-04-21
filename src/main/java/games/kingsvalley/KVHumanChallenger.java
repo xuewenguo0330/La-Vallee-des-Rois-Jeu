@@ -40,6 +40,7 @@ public class KVHumanChallenger implements IChallenger {
 		}
 	}
 
+
 	@Override
 	public void iPlay(String move) {
 		if (possibleMovesRole(roleChallenger).contains(move)) {
