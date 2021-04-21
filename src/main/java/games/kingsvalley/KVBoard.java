@@ -205,4 +205,43 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	public PIECE[][] getBoardGrid() {
 		return boardGrid;
 	}
+
+	public int getNbAutourSoleil(){
+		int nb=0;
+		for(int i=3;i<5;i++){
+			for(int j=2;j<4;j++){
+				if(boardGrid[i][j]!=PIECE.EMPTY && i!=4 && j!=3){
+					nb++;
+				}
+			}
+		}
+		return nb;
+	}
+
+	public int getNbRoiPossibleMove(KVRole playerRole){
+		int nb=0;
+		if(playerRole== KVRole.BLUE){
+			for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				if(isValidMove(new KVMove(roiBleu.x, roiBleu.y, d), playerRole)){}
+					nb++;
+				}
+
+			}
+		if(playerRole== KVRole.WHITE){
+			for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				if(isValidMove(new KVMove(roiWhite.x, roiWhite.y, d), playerRole)){}
+				nb++;
+			}
+
+		}
+		return nb;
+	}
+
+	public float distanceRoiCentre(KVRole playerRole){
+		if(playerRole==KVRole.BLUE){
+			return (float)Math.sqrt(Math.pow(roiBleu.x-4,2)+Math.pow(roiBleu.y-3,2));
+		}else{
+			return (float)Math.sqrt(Math.pow(roiWhite.x-4,2)+Math.pow(roiWhite.y-3,2));
+		}
+	}
 }

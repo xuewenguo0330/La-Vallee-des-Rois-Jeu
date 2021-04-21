@@ -1,5 +1,12 @@
 package games.kingsvalley;
 
+import games.dominos.DominosBoard;
+import games.dominos.DominosHeuristics;
+import games.dominos.DominosMove;
+import games.dominos.DominosRole;
+import iialib.games.algs.GameAlgorithm;
+import iialib.games.algs.algorithms.MiniMax;
+
 import java.util.Set;
 
 public class test {
