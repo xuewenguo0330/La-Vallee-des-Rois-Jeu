@@ -31,30 +31,17 @@ public class MyChallenger implements IChallenger {
 				roleOther = KVRole.BLUE;
 				System.out.println("You are WHITE.");
 			}
-			default -> {
-				System.out.println("Unrecognized role name, reset to default");
-				roleChallenger = KVRole.BLUE;
-				roleOther = KVRole.WHITE;
-			}
 		}
 	}
 
 	@Override
 	public void iPlay(String move) {
-		if (possibleMovesRole(roleChallenger).contains(move)) {
-			board = board.play(moveToKvmove(move), roleChallenger);
-		} else {
-			System.out.println("Wrong move from your side");
-		}
+		board = board.play(moveToKvmove(move), roleChallenger);
 	}
 
 	@Override
 	public void otherPlay(String move) {
-		if (possibleMovesRole(roleOther).contains(move)) {
-			board = board.play(moveToKvmove(move), roleOther);
-		} else {
-			System.out.println("Wrong move from other side");
-		}
+		board = board.play(moveToKvmove(move), roleOther);
 	}
 
 	@Override

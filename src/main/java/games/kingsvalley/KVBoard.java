@@ -15,8 +15,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	private final PIECE[][] boardGrid;
 	private Point roiBleu;
 	private Point roiWhite;
-	private GameAlgorithm<KVMove, KVRole, KVBoard> algoBlue;
-	private GameAlgorithm<KVMove, KVRole, KVBoard> algoWhite;
+	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoBlue = new AlphaBeta<>(KVRole.BLUE, KVRole.WHITE, KVHeuristique.heuristicBlue, 3);
+	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoWhite = new AlphaBeta<>(KVRole.WHITE, KVRole.BLUE, KVHeuristique.heuristicWhite, 6);
 
 	public KVBoard() {
 		boardGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
@@ -34,13 +34,21 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 		roiBleu = new Point(0, 3);
 		roiWhite = new Point(6, 3);
-
-		algoBlue = new AlphaBeta<>(KVRole.BLUE, KVRole.WHITE, KVHeuristique.heuristicBlue, 5);
-		algoWhite = new AlphaBeta<>(KVRole.WHITE, KVRole.BLUE, KVHeuristique.heuristicWhite, 5);
 	}
 
 	public KVBoard(PIECE[][] board) {
-		boardGrid = board;
+		boardGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
+		for (int i = 0; i < DEFAULT_GRID_SIZE; i++)
+			System.arraycopy(board[i], 0, boardGrid[i], 0, DEFAULT_GRID_SIZE);
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				switch (board[i][j]) {
+					case ROIBLEU -> roiBleu = new Point(i, j);
+					case ROIWHITE -> roiWhite = new Point(i, j);
+				}
+			}
+		}
 	}
 
 	public KVMove bestMove(KVRole role) {
@@ -105,8 +113,6 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		switch (piece) {
 			case ROIBLEU -> roiBleu = new Point(move.end.x, move.end.y);
 			case ROIWHITE -> roiWhite = new Point(move.end.x, move.end.y);
-			default -> {
-			}
 		}
 
 		return new KVBoard(newGrid);
@@ -114,11 +120,20 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	@Override
 	public boolean isValidMove(KVMove move, KVRole playerRole) {
-		if (boardGrid[move.start.x][move.start.y] == PIECE.EMPTY) System.out.println("Wrong move 2");
-
 		Point step = step(move.direction);
 		int new_x = move.start.x + step.x;
 		int new_y = move.start.y + step.y;
+
+		if (new_x == 3 && new_y == 3) {
+			switch (playerRole) {
+				case BLUE -> {
+					if (boardGrid[move.start.x][move.start.y] != PIECE.ROIBLEU) return false;
+				}
+				case WHITE -> {
+					if (boardGrid[move.start.x][move.start.y] != PIECE.ROIWHITE) return false;
+				}
+			}
+		}
 
 		// Vérifier si une pièce a un direction disponible
 		if (new_x < 0 || new_x > DEFAULT_GRID_SIZE - 1 || new_y < 0 || new_y > DEFAULT_GRID_SIZE - 1) return false;
@@ -138,13 +153,28 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	 * @return boolean
 	 */
 	public boolean roiBlock(KVRole role) {
-		for(KVMove.DIRECTION direction : KVMove.DIRECTION.values()) {
-			Point step = step(direction);
-			if (role == KVRole.BLUE && boardGrid[roiBleu.x + step.x][roiBleu.y + step.y] == PIECE.EMPTY) {
-				return false;
+		if (role == KVRole.BLUE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				Point step = step(d);
+				step.x += roiBleu.x;
+				step.y += roiBleu.y;
+
+				if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
+						step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
+					return false;
+				}
 			}
-			if (role == KVRole.WHITE && boardGrid[roiWhite.x + step.x][roiWhite.y + step.y] == PIECE.EMPTY) {
-				return false;
+		}
+		if (role == KVRole.WHITE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				Point step = step(d);
+				step.x += roiWhite.x;
+				step.y += roiWhite.y;
+
+				if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
+						step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -200,17 +230,30 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	/**
 	 * get matrice de plateau
+	 *
 	 * @return PIECE[][]
 	 */
 	public PIECE[][] getBoardGrid() {
 		return boardGrid;
 	}
 
-	public int getNbAutourSoleil(){
-		int nb=0;
-		for(int i=3;i<5;i++){
-			for(int j=2;j<4;j++){
-				if(boardGrid[i][j]!=PIECE.EMPTY && i!=4 && j!=3){
+	public int getNbAutourSoleil(KVRole playerRole) {
+		int nb = 0;
+		ArrayList<PIECE> piece = new ArrayList<>();
+		switch (playerRole) {
+			case WHITE -> {
+				piece.add(PIECE.ROIWHITE);
+				piece.add(PIECE.SOLDATWHITE);
+			}
+			case BLUE -> {
+				piece.add(PIECE.ROIBLEU);
+				piece.add(PIECE.SOLDATBLEU);
+			}
+		}
+
+		for (int i = 2; i < 4; i++) {
+			for (int j = 2; j < 4; j++) {
+				if (piece.contains(boardGrid[i][j]) && i != 3 && j != 3) {
 					nb++;
 				}
 			}
@@ -218,30 +261,63 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return nb;
 	}
 
-	public int getNbRoiPossibleMove(KVRole playerRole){
-		int nb=0;
-		if(playerRole== KVRole.BLUE){
-			for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-				if(isValidMove(new KVMove(roiBleu.x, roiBleu.y, d), playerRole)){}
-					nb++;
-				}
-
+	public int getNbRoiPossibleMove(KVRole playerRole) {
+		int nb = 0;
+		if (playerRole == KVRole.BLUE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				if (isValidMove(new KVMove(roiBleu.x, roiBleu.y, d), playerRole)) nb++;
 			}
-		if(playerRole== KVRole.WHITE){
-			for(KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-				if(isValidMove(new KVMove(roiWhite.x, roiWhite.y, d), playerRole)){}
-				nb++;
+		}
+		if (playerRole == KVRole.WHITE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				if (isValidMove(new KVMove(roiWhite.x, roiWhite.y, d), playerRole)) nb++;
 			}
-
 		}
 		return nb;
 	}
 
-	public float distanceRoiCentre(KVRole playerRole){
-		if(playerRole==KVRole.BLUE){
-			return (float)Math.sqrt(Math.pow(roiBleu.x-4,2)+Math.pow(roiBleu.y-3,2));
-		}else{
-			return (float)Math.sqrt(Math.pow(roiWhite.x-4,2)+Math.pow(roiWhite.y-3,2));
+	public float distanceRoiCentre(KVRole playerRole) {
+		if (playerRole == KVRole.BLUE) {
+			return (float) Math.sqrt(Math.pow(roiBleu.x - 4, 2) + Math.pow(roiBleu.y - 3, 2));
+		} else {
+			return (float) Math.sqrt(Math.pow(roiWhite.x - 4, 2) + Math.pow(roiWhite.y - 3, 2));
 		}
+	}
+
+	public int nbEmptyAutourRoi(KVRole role) {
+		int nb = 0;
+		if (role == KVRole.BLUE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				Point step = step(d);
+				step.x += roiBleu.x;
+				step.y += roiBleu.y;
+
+				if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
+						step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
+					nb++;
+				}
+			}
+		}
+		if (role == KVRole.WHITE) {
+			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+				Point step = step(d);
+				step.x += roiWhite.x;
+				step.y += roiWhite.y;
+
+				if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
+						step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
+					nb++;
+				}
+			}
+		}
+		return nb;
+	}
+
+	public boolean centreRoi(KVRole playerRole) {
+		switch (playerRole) {
+			case WHITE -> { return roiWhite.x == 3 && roiWhite.y == 3; }
+			case BLUE ->  { return roiBleu.x == 3 && roiBleu.y == 3; }
+		}
+		return false;
 	}
 }

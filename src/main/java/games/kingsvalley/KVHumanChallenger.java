@@ -61,9 +61,10 @@ public class KVHumanChallenger implements IChallenger {
 
 	@Override
 	public String bestMove() {
-		System.out.println(getBoard());
-		System.out.println("Entrer un coup :");
-		return new Scanner(System.in).nextLine();
+//		System.out.println(getBoard());
+//		System.out.println("Entrer un coup :");
+//		return new Scanner(System.in).nextLine();
+		return board.bestMove(roleChallenger).toString();
 	}
 
 	@Override
