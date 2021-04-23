@@ -2,6 +2,7 @@ package games.kingsvalley;
 
 import iialib.games.algs.GameAlgorithm;
 import iialib.games.algs.algorithms.AlphaBeta;
+import iialib.games.algs.algorithms.MiniMax;
 import iialib.games.model.IBoard;
 import iialib.games.model.Score;
 
@@ -15,8 +16,10 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	private final PIECE[][] boardGrid;
 	private Point roiBleu;
 	private Point roiWhite;
-	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoBlue = new AlphaBeta<>(KVRole.BLUE, KVRole.WHITE, KVHeuristique.heuristicBlue, 3);
-	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoWhite = new AlphaBeta<>(KVRole.WHITE, KVRole.BLUE, KVHeuristique.heuristicWhite, 6);
+	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoBlue = new AlphaBeta<>(KVRole.BLUE, KVRole.WHITE,
+			KVHeuristique.heuristicBlue, 3);
+	private final GameAlgorithm<KVMove, KVRole, KVBoard> algoWhite = new AlphaBeta<>(KVRole.WHITE, KVRole.BLUE,
+			KVHeuristique.heuristicWhite, 3);
 
 	public KVBoard() {
 		boardGrid = new PIECE[DEFAULT_GRID_SIZE][DEFAULT_GRID_SIZE];
@@ -86,8 +89,15 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 							for (int k = 0; k < DEFAULT_GRID_SIZE; k++) {
 								x += step.x;
 								y += step.y;
+
+								if (x == 3 && y == 3) {
+									if (playerRole == KVRole.BLUE && boardGrid[i][j] != PIECE.ROIBLEU) break;
+									if (playerRole == KVRole.WHITE && boardGrid[i][j] != PIECE.ROIWHITE) break;
+								}
+
 								if ((x < 0 || x > DEFAULT_GRID_SIZE - 1 || y < 0 || y > DEFAULT_GRID_SIZE - 1) ||
 										(boardGrid[x][y] != PIECE.EMPTY)) {
+
 									possibleMoves.add(new KVMove(i, j, x - step.x, y - step.y));
 									break;
 								}
@@ -97,7 +107,6 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 				}
 			}
 		}
-
 		return possibleMoves;
 	}
 
@@ -123,17 +132,6 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		Point step = step(move.direction);
 		int new_x = move.start.x + step.x;
 		int new_y = move.start.y + step.y;
-
-		if (new_x == 3 && new_y == 3) {
-			switch (playerRole) {
-				case BLUE -> {
-					if (boardGrid[move.start.x][move.start.y] != PIECE.ROIBLEU) return false;
-				}
-				case WHITE -> {
-					if (boardGrid[move.start.x][move.start.y] != PIECE.ROIWHITE) return false;
-				}
-			}
-		}
 
 		// Vérifier si une pièce a un direction disponible
 		if (new_x < 0 || new_x > DEFAULT_GRID_SIZE - 1 || new_y < 0 || new_y > DEFAULT_GRID_SIZE - 1) return false;

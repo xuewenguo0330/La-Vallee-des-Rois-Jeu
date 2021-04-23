@@ -73,12 +73,12 @@ public class AlphaBeta<Move extends IMove, Role extends IRole, Board extends IBo
             int value = alphabeta(played, 1, alpha, IHeuristic.MAX_VALUE, playerMinRole);
             if (value > alpha) {
                 alpha = value;
-                // System.out.println("CHANGED");
                 bestMove = move;
             }
         }
         System.out.println("Le nombre de feuille est " + this.nbLeaves);
         System.out.println("Le nombre de noeud est " + this.nbNodes);
+        System.out.println("Valeur meilleur: " + alpha);
 
         return bestMove;
     }

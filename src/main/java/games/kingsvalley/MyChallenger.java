@@ -2,6 +2,7 @@ package games.kingsvalley;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -12,6 +13,7 @@ public class MyChallenger implements IChallenger {
 	KVBoard board = new KVBoard();
 	KVRole roleChallenger;
 	KVRole roleOther;
+	ArrayList<String> bibliotheque = new ArrayList<>();
 
 	@Override
 	public String teamName() {
@@ -32,6 +34,21 @@ public class MyChallenger implements IChallenger {
 				System.out.println("You are WHITE.");
 			}
 		}
+
+		// Bibilothéque Overture
+//		if (roleChallenger == KVRole.BLUE) {
+//			bibliotheque.add("B1-B6");
+//			bibliotheque.add("B7-G4");
+//			bibliotheque.add("G1-C5");
+//			bibliotheque.add("C1-C4");
+//			bibliotheque.add("G4-D4");
+//		} else {
+//			bibliotheque.add("B7-B2");
+//			bibliotheque.add("D1-G4");
+//			bibliotheque.add("G7-C3");
+//			bibliotheque.add("C7-C4");
+//			bibliotheque.add("G4-D4");
+//		}
 	}
 
 	@Override
@@ -46,7 +63,18 @@ public class MyChallenger implements IChallenger {
 
 	@Override
 	public String bestMove() {
-		return board.bestMove(roleChallenger).toString();
+		if (bibliotheque.isEmpty()) {
+			return board.bestMove(roleChallenger).toString();
+		} else {
+			String move = bibliotheque.get(0);
+			if (board.isValidMove(moveToKvmove(move), roleChallenger)) {
+				bibliotheque.remove(move);
+				return move;
+			} else {
+				bibliotheque = new ArrayList<>();
+				return bestMove();
+			}
+		}
 	}
 
 	@Override

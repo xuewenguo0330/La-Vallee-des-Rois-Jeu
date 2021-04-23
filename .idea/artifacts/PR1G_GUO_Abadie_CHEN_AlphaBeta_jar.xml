@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="PRXX_Nom1_Nom2_Nom3:jar">
+  <artifact type="jar" name="PR1G_GUO_Abadie_CHEN_AlphaBeta:jar">
     <output-path>$PROJECT_DIR$/</output-path>
     <root id="archive" name="PRXX_Nom1_Nom2_Nom3.jar">
       <element id="module-output" name="PRXX_Nom1_Nom2_Nom3.main" />
