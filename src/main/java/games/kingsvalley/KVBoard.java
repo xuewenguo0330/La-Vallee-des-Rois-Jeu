@@ -2,7 +2,6 @@ package games.kingsvalley;
 
 import iialib.games.algs.GameAlgorithm;
 import iialib.games.algs.algorithms.AlphaBeta;
-import iialib.games.algs.algorithms.MiniMax;
 import iialib.games.model.IBoard;
 import iialib.games.model.Score;
 
@@ -47,18 +46,25 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
 				switch (board[i][j]) {
-					case ROIBLEU -> roiBleu = new Point(i, j);
-					case ROIWHITE -> roiWhite = new Point(i, j);
+					case ROIBLEU :
+						roiBleu = new Point(i, j);
+						break;
+					case ROIWHITE :
+						roiWhite = new Point(i, j);
+						break;
 				}
 			}
 		}
 	}
 
 	public KVMove bestMove(KVRole role) {
-		return switch (role) {
-			case BLUE -> algoBlue.bestMove(this, KVRole.BLUE);
-			case WHITE -> algoWhite.bestMove(this, KVRole.WHITE);
-		};
+		switch (role) {
+			case BLUE:
+				return algoBlue.bestMove(this, KVRole.BLUE);
+			case WHITE:
+				return algoWhite.bestMove(this, KVRole.WHITE);
+		}
+		return null;
 	}
 
 	@Override
@@ -120,8 +126,12 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 		// Mise à jour la position de roi si besoin
 		switch (piece) {
-			case ROIBLEU -> roiBleu = new Point(move.end.x, move.end.y);
-			case ROIWHITE -> roiWhite = new Point(move.end.x, move.end.y);
+			case ROIBLEU :
+				roiBleu = new Point(move.end.x, move.end.y);
+				break;
+			case ROIWHITE :
+				roiWhite = new Point(move.end.x, move.end.y);
+				break;
 		}
 
 		return new KVBoard(newGrid);
@@ -151,16 +161,14 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	 * @return boolean
 	 */
 	public boolean roiBlock(KVRole role) {
-		if (role == KVRole.BLUE) {
-			for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
-				Point step = step(d);
-				step.x += roiBleu.x;
-				step.y += roiBleu.y;
+		if (role == KVRole.BLUE) for (KVMove.DIRECTION d : KVMove.DIRECTION.values()) {
+			Point step = step(d);
+			step.x += roiBleu.x;
+			step.y += roiBleu.y;
 
-				if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
-						step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
-					return false;
-				}
+			if (step.x < DEFAULT_GRID_SIZE && step.y < DEFAULT_GRID_SIZE &&
+					step.x > 0 && step.y > 0 && boardGrid[step.x][step.y] == PIECE.EMPTY) {
+				return false;
 			}
 		}
 		if (role == KVRole.WHITE) {
@@ -210,17 +218,33 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 	 * @return Point
 	 */
 	public static Point step(KVMove.DIRECTION direction) {
-		Point res = null;
+		Point res=null;
 
 		switch (direction) {
-			case UP -> res = new Point(0, 1);
-			case DOWN -> res = new Point(0, -1);
-			case LEFT -> res = new Point(-1, 0);
-			case RIGHT -> res = new Point(1, 0);
-			case UL -> res = new Point(-1, 1);
-			case UR -> res = new Point(1, 1);
-			case DL -> res = new Point(-1, -1);
-			case DR -> res = new Point(1, -1);
+			case UP :
+				res = new Point(0, 1);
+				break;
+			case DOWN :
+				res = new Point(0, -1);
+				break;
+			case LEFT :
+				res = new Point(-1, 0);
+				break;
+			case RIGHT :
+				res = new Point(1, 0);
+				break;
+			case UL :
+				res = new Point(-1, 1);
+				break;
+			case UR:
+				res = new Point(1, 1);
+				break;
+			case DL :
+				res = new Point(-1, -1);
+				break;
+			case DR :
+				res = new Point(1, -1);
+				break;
 		}
 
 		return res;
@@ -239,14 +263,14 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		int nb = 0;
 		ArrayList<PIECE> piece = new ArrayList<>();
 		switch (playerRole) {
-			case WHITE -> {
+			case WHITE :
 				piece.add(PIECE.ROIWHITE);
 				piece.add(PIECE.SOLDATWHITE);
-			}
-			case BLUE -> {
+				break;
+			case BLUE :
 				piece.add(PIECE.ROIBLEU);
 				piece.add(PIECE.SOLDATBLEU);
-			}
+				break;
 		}
 
 		for (int i = 2; i < 4; i++) {
@@ -313,8 +337,10 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 
 	public boolean centreRoi(KVRole playerRole) {
 		switch (playerRole) {
-			case WHITE -> { return roiWhite.x == 3 && roiWhite.y == 3; }
-			case BLUE ->  { return roiBleu.x == 3 && roiBleu.y == 3; }
+			case WHITE  :
+				return roiWhite.x == 3 && roiWhite.y == 3;
+			case BLUE :
+				 return roiBleu.x == 3 && roiBleu.y == 3;
 		}
 		return false;
 	}

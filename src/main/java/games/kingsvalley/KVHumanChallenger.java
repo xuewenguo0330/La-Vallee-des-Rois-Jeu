@@ -22,21 +22,22 @@ public class KVHumanChallenger implements IChallenger {
 	@Override
 	public void setRole(String role) {
 		switch (role) {
-			case "BLUE" -> {
+			case "BLUE" :
 				roleChallenger = KVRole.BLUE;
 				roleOther = KVRole.WHITE;
 				System.out.println("You are BLUE.");
-			}
-			case "WHITE" -> {
+				break;
+
+			case "WHITE" :
 				roleChallenger = KVRole.WHITE;
 				roleOther = KVRole.BLUE;
 				System.out.println("You are WHITE.");
-			}
-			default -> {
+				break;
+
+			default :
 				System.out.println("Unrecognized role name, reset to default");
 				roleChallenger = KVRole.BLUE;
 				roleOther = KVRole.WHITE;
-			}
 		}
 	}
 
@@ -91,18 +92,23 @@ public class KVHumanChallenger implements IChallenger {
 			for (int j = 0; j < KVBoard.DEFAULT_GRID_SIZE; j++) {
 				if (i == 3 && j == 3) {
 					switch (boardGrid[i][j]) {
-						case ROIBLEU -> table.append("O ");
-						case ROIWHITE -> table.append("X ");
-						default -> table.append("+ ");
+						case ROIBLEU :
+							table.append("O ");
+							break;
+						case ROIWHITE :
+							table.append("X ");
+							break;
+						default : table.append("+ ");
+							break;
 					}
 					continue;
 				}
 				switch (boardGrid[i][j]) {
-					case EMPTY -> table.append("- ");
-					case ROIBLEU -> table.append("O ");
-					case ROIWHITE -> table.append("X ");
-					case SOLDATBLEU -> table.append("o ");
-					case SOLDATWHITE -> table.append("x ");
+					case EMPTY : table.append("- ");break;
+					case ROIBLEU : table.append("O ");break;
+					case ROIWHITE : table.append("X ");break;
+					case SOLDATBLEU : table.append("o ");break;
+					case SOLDATWHITE : table.append("x ");break;
 				}
 			}
 			table.append(" : ").append(7 - i).append("\n");
@@ -133,12 +139,13 @@ public class KVHumanChallenger implements IChallenger {
 
 			for (String c : strings) {
 				switch (c) {
-					case "o" -> boardGrid[lines][collone] = KVBoard.PIECE.SOLDATBLEU;
-					case "x" -> boardGrid[lines][collone] = KVBoard.PIECE.SOLDATWHITE;
-					case "X" -> boardGrid[lines][collone] = KVBoard.PIECE.ROIWHITE;
-					case "O" -> boardGrid[lines][collone] = KVBoard.PIECE.ROIBLEU;
-					case "-", "+" -> boardGrid[lines][collone] = KVBoard.PIECE.EMPTY;
-					default -> collone--;
+					case "o" : boardGrid[lines][collone] = KVBoard.PIECE.SOLDATBLEU;break;
+					case "x" : boardGrid[lines][collone] = KVBoard.PIECE.SOLDATWHITE;break;
+					case "X" : boardGrid[lines][collone] = KVBoard.PIECE.ROIWHITE;break;
+					case "O" : boardGrid[lines][collone] = KVBoard.PIECE.ROIBLEU;break;
+					case "-" : boardGrid[lines][collone] = KVBoard.PIECE.EMPTY;break;
+					case "+" : boardGrid[lines][collone] = KVBoard.PIECE.EMPTY;break;
+					default : collone--;break;
 				}
 				collone++;
 			}
