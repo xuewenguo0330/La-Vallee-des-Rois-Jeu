@@ -259,6 +259,8 @@ public class KVBoard implements IBoard<KVMove, KVRole, KVBoard> {
 		return boardGrid;
 	}
 
+
+	// ------------------------ Méthode pour les heuristiques ------------------------
 	public int getNbAutourSoleil(KVRole playerRole) {
 		int nb = 0;
 		ArrayList<PIECE> piece = new ArrayList<>();

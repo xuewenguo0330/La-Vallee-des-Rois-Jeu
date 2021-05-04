@@ -12,8 +12,8 @@ plugins {
     id 'eclipse'
 }
 
-sourceCompatibility = 15.0
-targetCompatibility = 15.0
+sourceCompatibility = 11.0
+targetCompatibility = 11.0
 
 
 repositories {
